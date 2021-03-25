@@ -1,13 +1,14 @@
 import express = require("express");
 import {Anki} from "./models/Anki";
 import {CrawlerService} from "./services/crawler.service";
-import {OxfordCrawler} from "./models/OxfordCrawler";
+import {OxfordCrawler} from "./models/crawlers/OxfordCrawler";
 import cors = require('cors')
 import bodyParser = require('body-parser')
 import multer = require("multer");
-import {AbstractParser} from "./models/AbstractParser";
-import {CsvParser} from "./models/CsvParser";
+import {AbstractParser} from "./models/parsers/AbstractParser";
+import {CsvParser} from "./models/parsers/CsvParser";
 import {MimeType} from "./enums/MimeType";
+import {TxtParser} from "./models/parsers/TxtParser";
 
 const app = express();
 app.use(cors());
@@ -25,28 +26,23 @@ app.get('/', (req, res) => {
 
 app.post('/files', multer().array('files'),(req, res) => {
     const file: Express.Multer.File = req.files[0];
-    const parser: AbstractParser = new CsvParser();
+    let parser: AbstractParser;
+
     if (file.mimetype === MimeType.CSV) {
-        parser.parse(Buffer.from(file.buffer))
-            .then((results: string[]) => {
-                crawlerService.getAnkiObjects(results, new OxfordCrawler()).then((ankiObjects: Anki[]) => {
-                    res.json(ankiObjects);
-                });
-            });
+        parser = new CsvParser();
     } else if (file.mimetype === MimeType.TXT) {
-        const fileContent: string[] = file.buffer.toString()
-            .split('\t').join(',')
-            .split('\r').join(',')
-            .split('\n').join(',')
-            .split(',')
-            .filter((content: string) => content)
-            .map((content: string) => content.trim());
-        crawlerService.getAnkiObjects(fileContent, new OxfordCrawler()).then((ankiObjects: Anki[]) => {
-            res.json(ankiObjects);
-        });
+        parser = new TxtParser();
     } else {
         res.json([]);
+        return;
     }
+
+    parser.parse(Buffer.from(file.buffer))
+        .then((results: string[]) => {
+            crawlerService.getAnkiObjects(results, new OxfordCrawler()).then((ankiObjects: Anki[]) => {
+                res.json(ankiObjects);
+            });
+        });
 })
 
 app.listen(port, () => {

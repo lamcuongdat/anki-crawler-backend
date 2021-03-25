@@ -1,5 +1,5 @@
 import {AbstractCrawler} from "./AbstractCrawler";
-import {Anki} from "./Anki";
+import {Anki} from "../Anki";
 import cheerioModule = require("cheerio");
 
 export class GoogleCrawler extends AbstractCrawler {

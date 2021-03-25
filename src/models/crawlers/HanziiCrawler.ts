@@ -1,5 +1,5 @@
 import {AbstractCrawler, ResponseType} from "./AbstractCrawler";
-import {Anki} from "./Anki";
+import {Anki} from "../Anki";
 
 export class HanziiCrawler extends AbstractCrawler{
     getSearchUrl(keyword: string): string {

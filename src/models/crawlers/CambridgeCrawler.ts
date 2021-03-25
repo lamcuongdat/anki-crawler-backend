@@ -1,5 +1,5 @@
 import {AbstractCrawler} from "./AbstractCrawler";
-import {Anki} from "./Anki";
+import {Anki} from "../Anki";
 import cheerioModule = require("cheerio");
 
 export class CambridgeCrawler extends AbstractCrawler {
@@ -18,7 +18,7 @@ export class CambridgeCrawler extends AbstractCrawler {
             name,
             vocab: name.toUpperCase(),
             wordForm: $('.posgram .pos.dpos').first().text(),
-            level: $('.epp-xref.dxref').text().toUpperCase(),
+            level: $('.epp-xref.dxref').first().text().toUpperCase(),
             pronounce: $('.us .ipa.dipa').first().text(),
             example: $('.examp .eg').first().text(),
             definition: $('.ddef_h .def').first().text(),
