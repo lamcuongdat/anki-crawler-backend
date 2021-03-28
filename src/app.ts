@@ -45,6 +45,16 @@ app.post('/files', multer().array('files'),(req, res) => {
         });
 })
 
+app.get('/words', (req, res) => {
+    let wordList: string[] | string= <string[] | string> req.query.words;
+    if (typeof wordList === 'string') {
+        wordList = [wordList];
+    }
+    crawlerService.getAnkiObjects(wordList, new OxfordCrawler()).then((ankiObjects: Anki[]) => {
+        res.json(ankiObjects);
+    });
+})
+
 app.listen(port, () => {
     return console.log(`server is listening on ${port}`);
 });
