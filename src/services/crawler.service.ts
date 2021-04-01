@@ -24,8 +24,13 @@ export class CrawlerService {
                     if(!anki.sound) {
                         const soundCrawler = new FreeTTSSoundCrawler();
                         request(soundCrawler.getSearchUrl(word), soundCrawler.getSearchOptions(word), (soundErr, soundRes, soundHtml) => {
-                            anki.sound = soundCrawler.getSoundURLFromId(JSON.parse(soundRes.body).id);
-                            resolve(anki);
+                            try {
+                                anki.sound = soundCrawler.getSoundURLFromId(JSON.parse(soundRes.body).id)
+                            } catch (e) {
+                                console.log(e);
+                            } finally {
+                                resolve(anki);
+                            }
                         })
                     } else {
                         resolve(anki);
