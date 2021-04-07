@@ -62,7 +62,7 @@ app.get('/words', (req, res) => {
     });
 })
 
-app.listen(port, () => {
+app.listen(process.env.PORT || port, () => {
     return console.log(`server is listening on ${port}`);
 });
 
