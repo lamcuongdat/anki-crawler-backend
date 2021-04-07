@@ -3,7 +3,8 @@ import {AbstractCrawler, ResponseType} from "../models/crawlers/AbstractCrawler"
 import {GoogleCrawler} from "../models/crawlers/GoogleCrawler";
 import request = require("request");
 import {FreeTTSSoundCrawler} from "../models/crawlers/FreeTTSSoundCrawler";
-
+import {SoundDto} from "../dtos/SoundDto";
+const fetch = require('node-fetch');
 export class CrawlerService {
     private getAnkiObject(word: string, crawler: AbstractCrawler): Promise<Anki> {
         return new Promise<Anki>((resolve) => {
@@ -21,7 +22,7 @@ export class CrawlerService {
 
                     //If there is no sound URL from dictionary
                     //Get it from FreeTTS
-                    if(!anki.sound) {
+                    if (!anki.sound) {
                         const soundCrawler = new FreeTTSSoundCrawler();
                         request(soundCrawler.getSearchUrl(word), soundCrawler.getSearchOptions(word), (soundErr, soundRes, soundHtml) => {
                             try {
@@ -50,5 +51,31 @@ export class CrawlerService {
                 resolve(results);
             })
         });
+    }
+
+    private getAudioBlob(src: string): Promise<SoundDto> {
+        return new Promise<SoundDto>((resolve => {
+            fetch(src)
+                .then((response) => response.buffer())
+                .then((buffer) => {
+                    const dto: SoundDto = {
+                        url: src,
+                        blob: buffer.toString('base64')
+                    }
+                    resolve(dto);
+                })
+        }))
+    }
+
+    public getAudioBlobs(urls: string[]): Promise<SoundDto[]> {
+        return new Promise<SoundDto[]>(resolve => {
+            let promises: Promise<SoundDto>[] = [];
+            urls.forEach((url: string) => {
+                promises.push(this.getAudioBlob(url));
+            })
+            Promise.all(promises).then((results: SoundDto[]) => {
+                resolve(results);
+            })
+        })
     }
 }
