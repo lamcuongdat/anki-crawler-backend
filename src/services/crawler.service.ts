@@ -53,9 +53,12 @@ export class CrawlerService {
         });
     }
 
-    private getAudioBlob(src: string): Promise<SoundDto> {
-        return new Promise<SoundDto>((resolve => {
+    public getAudioBlob(src: string): Promise<SoundDto> {
+        return new Promise<SoundDto>(((resolve, reject) => {
             fetch(src)
+                .catch(err => {
+                    reject(err);
+                })
                 .then((response) => response.buffer())
                 .then((buffer) => {
                     const dto: SoundDto = {
