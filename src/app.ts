@@ -65,22 +65,3 @@ app.get('/words', (req, res) => {
 app.listen(process.env.PORT || port, () => {
     return console.log(`server is listening on ${port}`);
 });
-
-app.get('/audio-files', (req, res) => {
-    let wordList: string[] | string= <string[] | string> req.query.audioUrls;
-    if (typeof wordList === 'string') {
-        wordList = [wordList];
-    }
-    crawlerService.getAudioBlobs(wordList).then((sounds: SoundDto[]) => {
-        res.send(sounds);
-    })
-})
-
-app.get('/audio-file', (req, res) => {
-    let word: string = <string> req.query.audioUrl;
-    crawlerService.getAudioBlob(word).then((sound: SoundDto) => {
-        res.send(sound);
-    }, () => {
-        res.send({url: undefined, blob: undefined})
-    })
-})

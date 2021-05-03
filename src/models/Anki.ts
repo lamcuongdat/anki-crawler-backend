@@ -10,4 +10,5 @@ export class Anki {
     advanced?: string = '';
     picture?: string = '';
     sound?: string = '';
+    soundBlob?: string = '';
 }

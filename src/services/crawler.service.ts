@@ -27,14 +27,21 @@ export class CrawlerService {
                         request(soundCrawler.getSearchUrl(word), soundCrawler.getSearchOptions(word), (soundErr, soundRes, soundHtml) => {
                             try {
                                 anki.sound = soundCrawler.getSoundURLFromId(JSON.parse(soundRes.body).id)
+                                this.getAudioBlob(anki.sound)
+                                    .then((res: SoundDto) => {
+                                        anki.soundBlob = res.blob;
+                                        resolve(anki);
+                                    })
                             } catch (e) {
                                 console.log(e);
-                            } finally {
-                                resolve(anki);
                             }
                         })
                     } else {
-                        resolve(anki);
+                        this.getAudioBlob(anki.sound)
+                            .then((res: SoundDto) => {
+                                anki.soundBlob = res.blob;
+                                resolve(anki);
+                            })
                     }
                 })
             })
@@ -68,17 +75,5 @@ export class CrawlerService {
                     resolve(dto);
                 })
         }))
-    }
-
-    public getAudioBlobs(urls: string[]): Promise<SoundDto[]> {
-        return new Promise<SoundDto[]>(resolve => {
-            let promises: Promise<SoundDto>[] = [];
-            urls.forEach((url: string) => {
-                promises.push(this.getAudioBlob(url));
-            })
-            Promise.all(promises).then((results: SoundDto[]) => {
-                resolve(results);
-            })
-        })
     }
 }
