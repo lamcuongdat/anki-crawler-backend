@@ -9,7 +9,6 @@ import {AbstractParser} from "./models/parsers/AbstractParser";
 import {CsvParser} from "./models/parsers/CsvParser";
 import {MimeType} from "./enums/MimeType";
 import {TxtParser} from "./models/parsers/TxtParser";
-import {SoundDto} from "./dtos/SoundDto";
 
 const app = express();
 app.use(cors());

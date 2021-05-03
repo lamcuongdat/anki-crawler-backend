@@ -25,6 +25,7 @@ export class CrawlerService {
                     if (!anki.sound) {
                         const soundCrawler = new FreeTTSSoundCrawler();
                         request(soundCrawler.getSearchUrl(word), soundCrawler.getSearchOptions(word), (soundErr, soundRes, soundHtml) => {
+                            console.log(soundRes.body)
                             try {
                                 anki.sound = soundCrawler.getSoundURLFromId(JSON.parse(soundRes.body).id)
                                 this.getAudioBlob(anki.sound)
@@ -34,6 +35,7 @@ export class CrawlerService {
                                     })
                             } catch (e) {
                                 console.log(e);
+                                resolve(anki);
                             }
                         })
                     } else {
